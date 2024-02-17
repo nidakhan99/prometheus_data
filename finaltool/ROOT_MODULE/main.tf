@@ -1,5 +1,5 @@
 module "vpc" {
-  source           = "/home/nida/finaltool/infratool/vpc"
+  source           = "github.com/nidakhan99/prometheus_data.git//finaltool/infratool/vpc?ref=script"
   vpc-cidr         = var.vpc-cidr2
   vpc-name         = var.vpc-name2
   vpc-region       = var.vpc-region2
@@ -7,7 +7,7 @@ module "vpc" {
 
 
 module "subnets" {
-  source            = "/home/nida/finaltool/infratool/subnet"
+  source            = "github.com/nidakhan99/prometheus_data.git//finaltool/infratool/subnet?ref=script"
   vpc-id            = module.vpc.vpc-id-out
   pub_az            = var.pub_az2
   pir_az            = var.pir_az2
@@ -16,21 +16,21 @@ module "subnets" {
 }
 
 module "internet_gateway" {
-  source             = "/home/nida/finaltool/infratool/internet_gateway"
+  source             = "github.com/nidakhan99/prometheus_data.git//finaltool/infratool/internet_gateway?ref=script"
   vpc-id             = module.vpc.vpc-id-out
   igw-name           = var.igw-name2
 }
 
 module "nat_gateway" {
-  source             = "/home/nida/finaltool/infratool/nat_gateway"
-  pub_sub_id           = module.subnets.pub-sub-out-id[0]
+  source             = "github.com/nidakhan99/prometheus_data.git//finaltool/infratool/nat_gateway?ref=script"
+  pub_sub_id         = module.subnets.pub-sub-out-id[0]
   nat-name           = var.nat-name2
 
 }
 
 
 module "route_tables" {
-  source              = "/home/nida/finaltool/infratool/route_table"
+  source              = "github.com/nidakhan99/prometheus_data.git//finaltool/infratool/route_table?ref=script"
   vpc-id              = module.vpc.vpc-id-out
   igw                 = module.internet_gateway.igw-id-out
   nat_id              = module.nat_gateway.out_nat
@@ -41,7 +41,7 @@ module "route_tables" {
 }
 
 module "security_grp" {
-  source               = "/home/nida/finaltool/infratool/security_group"
+  source               = "github.com/nidakhan99/prometheus_data.git//finaltool/infratool/security_group?ref=script"
   vpc_id               = module.vpc.vpc-id-out
   sg-name              = var.sg-name2
   sg_ports             = var.sg_ports2
@@ -52,7 +52,7 @@ module "security_grp" {
 }
 
 module "instances" {
-  source  = "/home/nida/finaltool/infratool/EC2"
+  source  = "github.com/nidakhan99/prometheus_data.git//finaltool/infratool/EC2?ref=script"
   pub_sub             = module.subnets.pub-sub-out-id
   pir_sub             = module.subnets.pirv-sub-out-id
   sg_id               = module.security_grp.sg_out
