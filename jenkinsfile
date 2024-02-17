@@ -24,13 +24,24 @@ pipeline {
             }
         }
 
-        stage('terraform Action') {
+        stage('Plan') {
             steps {
-                echo "Terraform action is –> ${action}"
-                sh "cd terraform/ROOT_MODULE && terraform ${action} -auto-approve"
+                sh 'pwd;cd terraform/ROOT_MODULE ; terraform plan -out tfplan'
+                sh 'pwd;cd terraform/ROOT_MODULE; terraform show -no-color tfplan > tfplan.txt'
             }
         }
-    
+
+        stage('terraform Action') {
+            steps {
+                script {
+                    def action = input(
+                        message: 'Do you want to apply or destroy?',
+                        parameters: [string(defaultValue: 'apply', description: 'apply or destroy', name: 'action')]
+                    )
+                    echo "Terraform action is –> ${action}"
+                    sh "cd terraform/ROOT_MODULE && terraform ${action} -auto-approve"
+                }
+            }
+        }
     }
 }
-
