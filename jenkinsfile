@@ -24,24 +24,24 @@ pipeline {
             }
         }
 
-        stage('Plan') {
-            steps {
-                sh 'pwd;cd terraform/ROOT_MODULE ; terraform plan -out tfplan'
-                sh 'pwd;cd terraform/ROOT_MODULE; terraform show -no-color tfplan > tfplan.txt'
-            }
-        }
-
         stage('terraform Action') {
             steps {
+                echo "Terraform action is –> ${action}"
+        
                 script {
-                    def action = input(
-                        message: 'Do you want to apply or destroy?',
-                        parameters: [string(defaultValue: 'apply', description: 'apply or destroy', name: 'action')]
-                    )
-                    echo "Terraform action is –> ${action}"
-                    sh "cd terraform/ROOT_MODULE && terraform ${action} -auto-approve"
+                    // Check the value of ${action} and execute the appropriate Terraform command
+                    if (action == 'plan') {
+                        sh "cd terraform/ROOT_MODULE && terraform plan -out tfplan"
+                    } else if (action == 'apply') {
+                        sh "cd terraform/ROOT_MODULE && terraform apply -auto-approve"
+                    } else if (action == 'destroy') {
+                        sh "cd terraform/ROOT_MODULE && terraform destroy -auto-approve"
+                    } else {
+                        error "Invalid action: ${action}. Supported actions are 'plan', 'apply', and 'destroy'."
+                    }
                 }
             }
         }
+
     }
 }
