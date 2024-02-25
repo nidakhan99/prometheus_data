@@ -54,7 +54,7 @@ resource "aws_instance" "private_instance" {
   subnet_id                     = var.pir_sub[count.index]
   security_groups               = [ var.sg_id]
   tags = {
-   Name = var.pub_instance
+   Name = var.pirv_instance
 
   }
 }
