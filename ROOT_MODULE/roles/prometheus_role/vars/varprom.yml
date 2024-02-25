@@ -1,0 +1,9 @@
+---
+# vars.yml
+
+prometheus_version: "2.30.3"
+prometheus_download_url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
+prometheus_local_destination: "/tmp/prometheus.tar.gz"
+scrape_time: "17"
+evaln_int: "17"
+

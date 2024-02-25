@@ -1,0 +1,48 @@
+---
+    - name: Include variables
+      include_vars:
+        file: vars/varprom.yml
+
+    
+    - name: Check if Prometheus binary exists
+      stat:
+        path: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64/prometheus"
+      register: prometheus_binary
+
+    - name: Display status
+      debug:
+        msg: "Prometheus is {{ 'installed' if prometheus_binary.stat.exists else 'not installed' }}"
+
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      when: not prometheus_binary.stat.exists and ansible_distribution == 'Ubuntu'
+        
+    - name: Update  cache for centos
+      yum:
+        update_cache: yes
+      when: not prometheus_binary.stat.exists and ansible_distribution == 'RedHat'
+    
+
+    - name: romoving binary files
+      file:
+        path: "/usr/local/bin/prometheus"
+        state: absent
+        
+    - name: romoving configuration files
+      file:
+        path: "/etc/prometheus"
+        state: absent
+
+    - name: removing service file
+      file:
+        path: "/etc/systemd/system/prometheus.service"
+        state: absent
+
+    - name: Uninstall the old version
+      file:
+        path: "/tmp/prometheus.tar.gz"
+        state: absent
+
+    

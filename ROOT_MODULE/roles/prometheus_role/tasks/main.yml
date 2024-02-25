@@ -1,0 +1,10 @@
+# Tasks file for prometheus_role
+- name: Checking versions and uninstalling old version
+  include_tasks: versioncheck.yml
+
+- name: Installing and configuring new version
+  include_tasks: installation.yml
+
+# Notify handler after both tasks
+- name: Restart Prometheus
+  meta: flush_handlers

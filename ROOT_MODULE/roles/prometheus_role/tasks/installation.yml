@@ -1,0 +1,113 @@
+---
+    - name: Create Prometheus user
+      user:
+        name: prometheus
+        system: yes
+
+    - name: Create Prometheus directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: prometheus
+        group: prometheus
+        mode: 0755
+      with_items:
+        - /etc/prometheus
+        - /var/lib/prometheus/consoles
+        - /var/lib/prometheus/console_libraries
+        - /var/lib/prometheus/rules
+        - /var/lib/prometheus/wal
+    
+    - name: Include variables
+      include_vars:
+        file: vars/varprom.yml
+
+    - name: disbaling silinux for redhat
+      lineinfile:
+        path: /etc/sysconfig/selinux
+        regexp: '^(\s*)SELINUX=enforcing$'
+        line: "SELINUX=disabled"
+      when: ansible_distribution == 'RedHat'
+
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Update  cache for centos
+      yum:
+        update_cache: yes
+      when: ansible_distribution == 'RedHat'
+
+    - name: Download Prometheus binary for ubuntu
+      get_url:
+        url: "{{ prometheus_download_url }}"
+        dest: "{{ prometheus_local_destination }}"
+      when: ansible_distribution == 'Ubuntu'   
+
+    - name: Download Prometheus binary for centos
+      get_url:
+        url: "{{ prometheus_download_url }}"
+        dest: "{{ prometheus_local_destination }}"
+      when: ansible_distribution == 'RedHat'
+
+    - name: Extract Prometheus
+      ansible.builtin.unarchive:
+        src: "/tmp/prometheus.tar.gz"
+        dest: "/tmp/"
+        remote_src: yes
+    
+    - name: Move Prometheus binaries to /usr/local/bin
+      command: "mv /tmp/prometheus-{{ prometheus_version }}.linux-amd64/prometheus /usr/local/bin/"
+      args:
+        creates: "/usr/local/bin/prometheus"
+
+    - name: Move Prometheus binaries to /usr/local/bin
+      command: "mv /tmp/prometheus-{{ prometheus_version }}.linux-amd64/promtool /usr/local/bin/"
+      args:
+        creates: "/usr/local/bin/promtool"
+
+    - name: Move consoles to prometheus directory
+      command: "mv /tmp/prometheus-{{ prometheus_version }}.linux-amd64/consoles/  /etc/prometheus/"
+      args:
+        creates: "/etc/prometheus/consoles"
+
+    - name: Move consoles to prometheus directory
+      command: "mv /tmp/prometheus-{{ prometheus_version }}.linux-amd64/console_libraries/ /etc/prometheus/"
+      args:
+        creates: "/etc/prometheus/console_libraries"
+
+    - name: Set Prometheus user as owner for /usr/local/bin/prometheus
+      file:
+        path: "/usr/local/bin/prometheus"
+        state: touch
+        owner: prometheus
+
+    - name: Copy Prometheus configuration file
+      copy:
+        src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64/prometheus.yml"
+        dest: "/etc/prometheus/prometheus.yml"
+        owner: prometheus
+        group: prometheus
+        mode: 0644
+        remote_src: yes 
+
+    - name: Create systemd service file
+      copy:
+        src: "promconf"
+        dest: "/etc/systemd/system/prometheus.service"
+      when: ansible_distribution == 'Ubuntu'
+    
+    - name: using jinj2 for change in configuration file
+      template:
+        src: "prometheus.yml.j2"
+        dest: /etc/prometheus/prometheus.yml
+      
+       
+    - name: Start Prometheus as a systemd service
+      systemd:
+        name: prometheus
+        enabled: yes
+        state: started
+      
