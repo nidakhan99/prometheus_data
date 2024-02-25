@@ -139,7 +139,7 @@ variable "ami_type2" {
 
 variable "owner-id2" {
   type        = string
-  default     = "137112412989"
+  default     = "099720109477"
   description = "image of ubuntu 20 version "
 
 }
@@ -147,7 +147,7 @@ variable "owner-id2" {
 
 variable "ami-name2" {
   type        = string
-  default     = "al2023-ami-2023.3.20240205.2-kernel-6.1-x86_64"
+  default     = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20231025"
   description = "image of ubuntu 20 version "
 
 }
@@ -171,5 +171,25 @@ variable "vartualiztion_type2" {
   type        = string
   default     = "hvm"
   description = "virtualization-type"
+}
+
+######################[ANSIBLE VARIABLE]#############################
+
+variable "ssh_user2" {
+  type        = string
+  default     = "ubuntu"
+  description = "username of machine"
+}
+
+variable "private_key_path_2" {
+  type        = string
+  default     = "/home/nida/Downloads/ohio_key.pem"
+  description = "ssh key path"
+}
+
+variable "file_name2" {
+  type        = string
+  default     = "prometheus.yaml"
+  description = "ansible role play"
 }
 
