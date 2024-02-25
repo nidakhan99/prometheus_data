@@ -61,4 +61,7 @@ module "instances" {
   vartualiztion_type  = var.vartualiztion_type2
   ec2_type            = var.ec2_type2
   owner-id            = var.owner-id2
+  ssh_user            = var.ssh_user2
+  private_key_path    = var.private_key_path_2
+  file_name           = var.file_name2
 }
