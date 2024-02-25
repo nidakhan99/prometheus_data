@@ -101,3 +101,16 @@ variable "vartualiztion_type" {
   default = "xyx"
   description = "virtualiztion type for ami"
 }
+
+variable "ssh_user" {
+type        = string
+  
+}
+
+variable "private_key_path" {
+type        = string
+}
+
+variable "file_name" {
+type        = string
+}
