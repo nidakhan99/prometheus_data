@@ -41,9 +41,9 @@ variable "bestion" {
   description = "name for bestion host"
 }
 
-variable "pub_instance" {
+variable "pirv_instance" {
   type        = string
-  default = "public_instance"
+  default = "pirv_instance"
   description = "name for private server"
 }
 
