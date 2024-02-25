@@ -1,0 +1,12 @@
+- hosts: all
+  become: true
+  remote_user: ubuntu
+  gather_facts: true
+
+  # vars_prompt:
+  #   - name: role_name
+  #     prompt: "Enter your role name"
+  #     private: false
+
+  roles:
+    - prometheus_role
