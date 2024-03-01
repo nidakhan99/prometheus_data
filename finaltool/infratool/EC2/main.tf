@@ -83,9 +83,6 @@ resource "aws_instance" "private_instance" {
   subnet_id                     = var.pir_sub[count.index]
   security_groups               = [var.sg_id]
 
-  provisioner "local-exec" {
-    command = "ansible-playbook -i ${aws_instance.bestion[0].public_ip}, --private-key /home/ubuntu/ohio_key.pem ${var.node_file_name}"
-  }
 
   tags = {
     Name = var.pirv_instance
