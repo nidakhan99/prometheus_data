@@ -64,4 +64,8 @@ module "instances" {
   ssh_user            = var.ssh_user2
   private_key_path    = var.private_key_path_2
   file_name           = var.file_name2
+  node_file_name      = var.node_yml
+  aler_file           = var.alert_file2
+  bestion             = var.bestion_name
+  pirv_instance       = var.pirv_instance_name
 }
