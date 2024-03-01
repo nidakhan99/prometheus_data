@@ -96,7 +96,7 @@ variable "sg-name2" {
 
 variable "sg_ports2" {
   type        = list(number)
-  default     = [22,443,80,90,9090,8080,9091]
+  default     = [22,443,80,90,9090,8080,9200,9093,9115]
   description = "security group ports rule "
 }
 
