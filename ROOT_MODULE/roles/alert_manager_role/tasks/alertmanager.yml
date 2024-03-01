@@ -1,0 +1,38 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Update cache for centos
+  yum:
+    update_cache: yes
+  when: ansible_distribution == 'RedHat'
+
+- name: Download alertmanager binary for ubuntu
+  get_url:
+    url: "{{ alertmanager_download_url }}"
+    dest: "{{ alertmanager_local_destination }}"
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Download alert manager binary for centos
+  get_url:
+    url: "{{ alertmanager_download_url }}"
+    dest: "{{ alertmanager_local_destination }}"
+  when: ansible_distribution == 'RedHat'
+
+- name: Extract alertmanager
+  ansible.builtin.unarchive:
+    src: "{{ alertmanager_local_destination }}"
+    dest: "/tmp/"
+    remote_src: yes
+
+- name: Running as background service
+  ansible.builtin.shell:
+    cmd: "nohup /tmp/alertmanager-0.27.0.linux-amd64/alertmanager > alert_manager.log 2>&1 &"
+    chdir: "/tmp/alertmanager-0.27.0.linux-amd64/"
+  async: 0
+  poll: 0
+  become: yes
+
+

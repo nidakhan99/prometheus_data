@@ -1,4 +1,3 @@
----
 # tasks file for exporter_role
 ---
     - name: Create_node_exporter_GROUP
@@ -66,7 +65,7 @@
       
 
     - name: Move node-exporter binaries to /usr/bin
-      command: "mv /tmp/node_exporter-files//node_exporter /usr/bin/"
+      command: "mv /tmp/node_exporter-files/node_exporter /usr/bin/"
       args:
         creates: "/usr/bin/node_exporter"
 

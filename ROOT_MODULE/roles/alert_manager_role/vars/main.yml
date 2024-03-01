@@ -1,0 +1,5 @@
+---
+# vars file for alert_manager_role
+version: "0.27.0"
+alertmanager_download_url: "https://github.com/prometheus/alertmanager/releases/download/v{{ version }}/alertmanager-{{ version }}.linux-amd64.tar.gz"
+alertmanager_local_destination: "/tmp/alertmanager.tar.gz"

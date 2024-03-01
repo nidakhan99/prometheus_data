@@ -1,0 +1,4 @@
+---
+# tasks file for alert_manager_role
+- name: Installing and configuring new version
+  include_tasks: alertmanager.yml

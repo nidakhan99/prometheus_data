@@ -1,3 +1,91 @@
+# tasks file for exporter_role
+---
+    - name: Create_node_exporter_GROUP
+      group:
+        name: node_exporter
+        state: present
 
-- name: Installing and configuring new version
-  include_tasks: installation.yml
+    - name: Create_node_exporter_user
+      user:
+        name: node_exporter
+        system: yes
+
+    - name: Create_node_exporter_directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: node_exporter
+        group: node_exporter
+        mode: 0755
+      with_items:
+        - /etc/node_exporter
+        - "/home/ubuntu/node_exporter_dir"
+
+    - name: Include variables
+      include_vars:
+        file: vars/main.yml
+
+    - name: disbaling silinux for redhat
+      lineinfile:
+        path: /etc/sysconfig/selinux
+        regexp: '^(\s*)SELINUX=enforcing$'
+        line: "SELINUX=disabled"
+      when: ansible_distribution == 'RedHat'
+
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Update  cache for centos
+      yum:
+        update_cache: yes
+      when: ansible_distribution == 'RedHat'
+
+    - name: Download Prometheus binary for ubuntu
+      get_url:
+        url: "{{ node_exporter_download_url }}"
+        dest: "{{ exporter_local_destination }}"
+      when: ansible_distribution == 'Ubuntu'   
+
+    - name: Download Prometheus binary for centos
+      get_url:
+        url: "{{ node_exporter_download_url }}"
+        dest: "{{ exporter_local_destination }}"
+      when: ansible_distribution == 'RedHat'
+
+    - name: Extract_node_exporter
+      ansible.builtin.unarchive:
+        src: "{{ exporter_local_destination }}"
+        dest: "/home/ubuntu/"
+        remote_src: yes
+    
+    - name: Move node_exporter in a directory
+      command: "mv /home/ubuntu/node_exporter-{{ node_exporter_version }}.linux-amd64/ /home/ubuntu/node_exporter-files"
+      args:
+        creates: "/home/ubuntu/node_exporter-files"
+
+    - name: Move node-exporter binaries to /usr/bin
+      command: "cp /home/ubuntu/node_exporter-files/node_exporter /usr/bin/"
+      
+    - name: Set node_exporter user as owner for /usr/bin/node_exporter
+      file:
+        path: "/usr/bin/node_exporter"
+        state: touch
+        group: node_exporter
+        owner: node_exporter
+
+    - name: Create systemd service file
+      copy:
+        src: "node_exporter_conf"
+        dest: "/usr/lib/systemd/system/node_exporter.service"
+      when: ansible_distribution == 'Ubuntu'
+    
+      
+       
+    - name: Start node_exporter as a systemd service
+      systemd:
+        name: node_exporter
+        enabled: yes
+        state: started
