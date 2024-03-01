@@ -29,7 +29,7 @@ sg-name2 = "tool-sg"
 
 ######################[INSTANCES VARIABLE]#############################
 bestion_name  = "Prometheus_server"
-pirv_instance2 = "node_exporter"
+pirv_instance_name = "node_exporter"
   
 
 
