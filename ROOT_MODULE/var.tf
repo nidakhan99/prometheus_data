@@ -192,4 +192,37 @@ variable "file_name2" {
   default     = "prometheus.yaml"
   description = "ansible role play"
 }
+variable "node_yml" {
+  type        = string
+  default     = "node_exporter.yml"
+  description = "exporter role play"
+}
+
+variable "alert_file2" {
+  type        = string
+  default     = "alert_manager.yml"
+  description = "alert manager role play"
+}
+
+# variable "bestion_name" {
+#   type        = list(string)
+#   default     = [ "Prometheus" , "node_exporter_pub"]
+#   description = "bestion named as prometheus"
+# }
+
+
+variable "bestion_name" {
+  type        = string
+  default     = "Prometheus"
+  description = "bestion named as prometheus"
+}
+
+variable "pirv_instance_name" {
+  type        = string
+  default     = "Node_exporter"
+  description = "private instance as node exporter"
+}
+
+
+
 
