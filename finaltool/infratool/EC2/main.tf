@@ -55,6 +55,16 @@ resource "aws_instance" "bestion" {
     command = "ansible-playbook  -i ${aws_instance.bestion[0].public_ip}, --private-key ${var.private_key_path}  ${var.file_name}"
     
   }
+  }
+  provisioner "local-exec" {
+    command = "ansible-playbook  -i ${aws_instance.bestion[0].public_ip}, --private-key ${var.private_key_path}  ${var.aler_file}"
+    
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -i ${aws_instance.bestion[0].public_ip}, --private-key /home/ubuntu/ohio_key.pem ${var.node_file_name}"
+  }
+
 
   tags = {
    Name = var.bestion
