@@ -114,3 +114,17 @@ type        = string
 variable "file_name" {
 type        = string
 }
+
+
+
+variable "node_file_name" {
+type        = string
+}
+
+# variable "bestion_ip" {
+# type        = string
+# }
+
+variable "aler_file" {
+type        = string
+}
