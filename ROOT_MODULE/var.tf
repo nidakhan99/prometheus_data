@@ -219,7 +219,7 @@ variable "bestion_name" {
 
 variable "pirv_instance_name" {
   type        = string
-  default     = "Node_exporter"
+  default     = "Black_box_exporter"
   description = "private instance as node exporter"
 }
 
