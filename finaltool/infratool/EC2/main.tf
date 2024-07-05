@@ -50,16 +50,16 @@ resource "aws_instance" "bestion" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i ${self.public_ip}, --private-key ${var.private_key_path} ${var.file_name}"
+    command = "scp -r data-processing"
   }
 
-  provisioner "local-exec" {
-    command = "ansible-playbook -i ${self.public_ip}, --private-key ${var.private_key_path} ${var.aler_file}"
-  }
+  #provisioner "local-exec" {
+    #command = "ansible-playbook -i ${self.public_ip}, --private-key ${var.private_key_path} ${var.aler_file}"
+  #}
 
-  provisioner "local-exec" {
-    command = "ansible-playbook -i ${self.public_ip}, --private-key /home/ubuntu/ohio_key.pem ${var.node_file_name}"
-  }
+  #provisioner "local-exec" {
+    #command = "ansible-playbook -i ${self.public_ip}, --private-key /home/ubuntu/ohio_key.pem ${var.node_file_name}"
+  #}
 
   tags = {
     Name = var.bestion
@@ -75,6 +75,19 @@ resource "aws_instance" "private_instance" {
   key_name                      = var.key
   subnet_id                     = var.pir_sub[count.index]
   security_groups               = [var.sg_id]
+
+connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      private_key = file(var.private_key_path)
+      host        = self.public_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "command = "ansible-playbook -i ${self.public_ip}, --private-key ${var.private_key_path} ${var.aler_file}"
+    ]
+  }
 
 
   tags = {
@@ -94,11 +107,6 @@ resource "aws_instance" "private_instance" {
 #   security_groups               = [var.sg_id]
 
 
-#  provisioner "remote-exec" {
-#   inline = [
-#   "echo 'Wait until SSH is ready'",
-#   "sleep 60",
-# ]
   
 #   connection {
 #     type        = "ssh"
